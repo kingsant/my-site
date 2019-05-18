@@ -1,5 +1,6 @@
 package cn.luischen.controller;
 
+import cn.luischen.api.UploadService;
 import cn.luischen.constant.ErrorConstant;
 import cn.luischen.constant.Types;
 import cn.luischen.constant.WebConst;
@@ -21,14 +22,17 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
@@ -56,17 +60,8 @@ public class HomeController extends BaseController{
     @Autowired
     private OptionService optionService;
 
-
-
-    @ApiIgnore
-    @GetMapping(value = {"/about", "/about/index"})
-    public String getAbout(HttpServletRequest request){
-        this.blogBaseData(request, null);//获取友链
-        request.setAttribute("active","about");
-        return "site/about";
-    }
-
-
+    @Autowired
+    private UploadService uploadService;
 
     @ApiOperation("blog首页")
     @GetMapping(value = {"/blog/","/blog/index"})
@@ -369,6 +364,9 @@ public class HomeController extends BaseController{
         author = EmojiParser.parseToAliases(author);
         text = EmojiParser.parseToAliases(text);
 
+        if (mail == null) {
+            mail = "";
+        }
         CommentDomain comments = new CommentDomain();
         comments.setAuthor(author);
         comments.setCid(cid);
@@ -389,6 +387,7 @@ public class HomeController extends BaseController{
 
             return APIResponse.success();
         } catch (Exception e) {
+            System.out.println(e);
             throw BusinessException.withErrorCode(ErrorConstant.Comment.ADD_NEW_COMMENT_FAIL);
         }
     }
@@ -442,7 +441,7 @@ public class HomeController extends BaseController{
     ){
         page = page < 0 || page > WebConst.MAX_PAGE ? 1 : page;
         ContentCond contentCond = new ContentCond();
-        contentCond.setType(Types.PHOTO.getType());
+        contentCond.setType(Types.ARTICLE.getType());
         PageInfo<ContentDomain> articles = contentService.getArticlesByCond(contentCond, page, limit);
         request.setAttribute("archives", articles);
         request.setAttribute("active", "work");
@@ -463,9 +462,14 @@ public class HomeController extends BaseController{
         return "site/works-details";
     }
 
-
-
-
-
+    @GetMapping(value = "/image/cache/{cid}",produces = MediaType.IMAGE_JPEG_VALUE)
+    @ResponseBody
+    public byte[] getImage( @PathVariable("cid")String cid) throws IOException {
+        File file = new File(uploadService.CACHE_PATH + File.separator + cid);
+        FileInputStream inputStream = new FileInputStream(file);
+        byte[] bytes = new byte[inputStream.available()];
+        inputStream.read(bytes, 0, inputStream.available());
+        return bytes;
+    }
 
 }

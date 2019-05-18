@@ -68,9 +68,6 @@ logging:
 swagger:
   show: true
 
-qiniu:
-  accesskey: ""
-  serectkey: ""
-  bucket: ""
-  cdn:
-    url: ""
+file:
+  path: D:\pic_cache
+  host: http://220.191.209.229:8080

@@ -1,5 +1,6 @@
 package cn.luischen.controller.admin;
 
+import cn.luischen.api.UploadService;
 import cn.luischen.constant.LogActions;
 import cn.luischen.constant.WebConst;
 import cn.luischen.controller.BaseController;
@@ -22,11 +23,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -47,8 +52,6 @@ public class IndexController extends BaseController{
 
     @Autowired
     private UserService userService;
-
-
 
     @ApiOperation("进入首页")
     @GetMapping(value = {"","/index"})
@@ -142,8 +145,6 @@ public class IndexController extends BaseController{
             return APIResponse.fail(msg);
         }
     }
-
-
 
 
 }

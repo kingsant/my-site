@@ -18,9 +18,9 @@
     <section class="col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
       <article role="pge-title-content">
         <header>
-          <h2><span>Luis</span> A Java Developer.</h2>
+          <h2><span>I-log</span>To Dear HuangYing</h2>
         </header>
-        <p>maker of things for the web app, always focused on elegant simplicity, relentlessly learning by making mistakes.</p>
+        <p>Recording A Good Life!!!</p>
       </article>
     </section>
     <th:block th:each="archive,archiveStat : ${archives.list}">
@@ -30,7 +30,7 @@
             <figcaption>
               <h2><th:block th:text="${archive.title}" ></th:block></h2>
               <p><th:block th:utext="${commons.fmtdate_en(archive.created)}"></th:block></p>
-              <a th:href="${commons.photoPermalink(archive.cid)}">View more</a> </figcaption>
+              <a th:href="${commons.blogPermalink(archive.cid)}">View more</a> </figcaption>
           </figure>
         </section>
       </th:block>
@@ -47,7 +47,7 @@
                 <figcaption>
                   <h2><th:block th:text="${archive.title}" ></th:block></h2>
                   <p><th:block th:utext="${commons.fmtdate_en(archive.created)}"></th:block></p>
-                  <a th:href="${commons.photoPermalink(archive.cid)}">View more</a> </figcaption>
+                  <a th:href="${commons.blogPermalink(archive.cid)}">View more</a> </figcaption>
               </figure>
             </li>
           </th:block>
@@ -65,7 +65,7 @@
                 <figcaption>
                   <h2><th:block th:text="${archive.title}" ></th:block></h2>
                   <p><th:block th:utext="${commons.fmtdate_en(archive.created)}"></th:block></p>
-                  <a th:href="${commons.photoPermalink(archive.cid)}">View more</a> </figcaption>
+                  <a th:href="${commons.blogPermalink(archive.cid)}">View more</a> </figcaption>
               </figure>
             </li>
           </th:block>

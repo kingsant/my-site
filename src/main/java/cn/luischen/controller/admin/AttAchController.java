@@ -1,6 +1,6 @@
 package cn.luischen.controller.admin;
 
-import cn.luischen.api.QiniuCloudService;
+import cn.luischen.api.UploadService;
 import cn.luischen.constant.ErrorConstant;
 import cn.luischen.constant.Types;
 import cn.luischen.constant.WebConst;
@@ -45,7 +45,7 @@ public class AttAchController {
     @Autowired
     private AttAchService attAchService;
     @Autowired
-    private QiniuCloudService qiniuCloudService;
+    private UploadService uploadService;
 
 
 
@@ -84,14 +84,14 @@ public class AttAchController {
 
             String fileName = TaleUtils.getFileKey(file.getOriginalFilename()).replaceFirst("/","");
 
-            qiniuCloudService.upload(file, fileName);
+            String url = uploadService.upload(file, fileName);
             AttAchDomain attAch = new AttAchDomain();
             HttpSession session = request.getSession();
             UserDomain sessionUser = (UserDomain) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
             attAch.setAuthorId(sessionUser.getUid());
-            attAch.setFtype(TaleUtils.isImage(file.getInputStream()) ? Types.IMAGE.getType() : Types.FILE.getType());
+            attAch.setFtype(Types.IMAGE.getType());
             attAch.setFname(fileName);
-            attAch.setFkey(qiniuCloudService.QINIU_UPLOAD_SITE + fileName);
+            attAch.setFkey(url);
             attAchService.addAttAch(attAch);
             response.getWriter().write( "{\"success\": 1, \"message\":\"上传成功\",\"url\":\"" + attAch.getFkey() + "\"}" );
         } catch (IOException e) {
@@ -124,19 +124,20 @@ public class AttAchController {
 
                 String fileName = TaleUtils.getFileKey(file.getOriginalFilename()).replaceFirst("/","");
 
-                qiniuCloudService.upload(file, fileName);
+                String url = uploadService.upload(file, fileName);
                 AttAchDomain attAch = new AttAchDomain();
                 HttpSession session = request.getSession();
                 UserDomain sessionUser = (UserDomain) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
                 attAch.setAuthorId(sessionUser.getUid());
-                attAch.setFtype(TaleUtils.isImage(file.getInputStream()) ? Types.IMAGE.getType() : Types.FILE.getType());
+                attAch.setFtype(Types.IMAGE.getType());
                 attAch.setFname(fileName);
-                attAch.setFkey(qiniuCloudService.QINIU_UPLOAD_SITE + fileName);
+                attAch.setFkey(url);
                 attAchService.addAttAch(attAch);
+
             }
             return APIResponse.success();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.info("e:{}",e);
             throw BusinessException.withErrorCode(ErrorConstant.Att.UPLOAD_FILE_FAIL)
                     .withErrorMessageArguments(e.getMessage());
         }
